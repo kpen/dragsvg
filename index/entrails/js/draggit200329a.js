@@ -9,9 +9,9 @@ and write ... somewhere:  var dr = new draggit;
 var superDX = 0; 
 var superDY = 0;
 //>>-square() - - - - - - - - - - - - - - -
-function square(boss,x1,y1,wi,he){ /*->square_object*/
+function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
 	this.boss = boss;
-  this.Bx=this.cX=x1; /*->initiate_x_y_w_h*/
+  this.Bx=this.cX=x1; 
   this.By=this.cY=y1; 
   this.nX=x1;
   this.nY=y1;
@@ -19,11 +19,16 @@ function square(boss,x1,y1,wi,he){ /*->square_object*/
   this.pressed=0;
   this.draG=false;
   this.visible = false;//don't know yet what for
-  this.active = true; /*<-*/
+  this.active = true; 
+  this.svGroup = svGroup
 
 //this.pont = diVo;
 //pont.move(this.nX, this.nY); //using SVGJS - move "the tool" to the actual XY-position
-
+	this.setPict = function(svgstr){
+		this.svGroup.clear()
+    	this.svGroup.svg(svgstr)
+    }
+  
   this.setSize = function(wi,he){
     	this.wi=wi; this.he=he;   
   }
@@ -104,7 +109,7 @@ function square(boss,x1,y1,wi,he){ /*->square_object*/
 }
 
 //>>-draggit() --------------------------------------------------
-function draggit(name,wTH,hTH,draw, draw2){
+function draggit(name,wTH,hTH,draw0,draw1){
   
  this.host_div = document.getElementById(name); //where to put our new divs
  this.name = name;
@@ -116,7 +121,8 @@ function draggit(name,wTH,hTH,draw, draw2){
 
  this.mousePath = -1; //did user moved the mouse between btnDOWN and btnUP
  this.tOuched = -1; //the number of the 'selected' square in M[]array 
-
+ this.tOuchLr = 0;
+  
  this.dMx = 0;
  this.dMy = 0;
  this.DX = $(this.host_div).offset().left; 
@@ -132,8 +138,10 @@ function draggit(name,wTH,hTH,draw, draw2){
   	this.up3 = function(x,y){;}
 	this.up4 = function(x,y){;}
   
-    this.M = []
-    this.M[0] = new square(this, -1, -1, 0, 0); //will be background
+    this.Mt = []
+    this.Mt[0] = []
+	this.Mt[1] = []
+    this.Mt[0][0] = new square(this, -1, -1, 0, 0); //will be background
   
   this.svgLinks; //for showing and hiding golink rectangles
 this.lnks=[];  //lnk objects to compare coordinates
@@ -150,35 +158,39 @@ this.countSvgLinks = 0; //the counter for lnk objects
     this.M[1].A_down = function(x,y){console.log("Bx="+this.Bx);}
   */
   //>>-svg_SX_TO - - - - - - - - - - 
-  this.ESX_TO = wTH/2;
-  this.ESY_TO = hTH/2;
-  this.kf_TO = 0.5;
-  this.draw_TO = draw;
+  this.ESX_1 = wTH/2;
+  this.ESY_1 = hTH/2;
+  this.kf_1 = 0.5;
+  this.draw_1 = draw1;
   this.wTH = wTH;
   this.hTH = hTH;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  this.ESX_DR = wTH/2;
-  this.ESY_DR = hTH/2;
-  this.kf_DR = 0.5;
-  this.draw_DR = draw2;
+  this.ESX_0 = wTH/2;
+  this.ESY_0 = hTH/2;
+  this.kf_0 = 0.5;
+  this.draw_0 = draw0;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - 
   //s.draw = SVG(s.name).size(s.wTH, s.hTH);
 // - - - - - - - - - - - - - - - - - - - - - - - - - -   
-  this.DRW_TO = function(){
-    s.draw_TO.viewbox(s.ESX_TO-s.kf_TO*s.wTH/2,
-    s.ESY_TO-s.kf_TO*s.hTH/2,s.wTH*s.kf_TO, s.hTH*s.kf_TO);}
+  this.DRW_1 = function(){
+    s.draw_1.viewbox(s.ESX_1-s.kf_1*s.wTH/2,
+    s.ESY_1-s.kf_1*s.hTH/2,s.wTH*s.kf_1, s.hTH*s.kf_1);}
 // - - - - - - - - - - - - - - - - - - - - - - -
-    this.DRW_DR = function(){
-    s.draw_DR.viewbox(s.ESX_DR-s.kf_DR*s.wTH/2, s.ESY_DR-s.kf_DR*s.hTH/2,
-    s.wTH*s.kf_DR, s.hTH*s.kf_DR);}
+    this.DRW_0 = function(){
+    s.draw_0.viewbox(s.ESX_0-s.kf_0*s.wTH/2, s.ESY_0-s.kf_0*s.hTH/2,
+    s.wTH*s.kf_0, s.hTH*s.kf_0);}
 // - - - - - - - - - - - - - - - - - - - - - - -
-this.clcX = function (x){return /*Math.round*/(s.ESX_DR+(x-s.wTH/2)*s.kf_DR);}
-this.clcY = function (y){return /*Math.round*/(s.ESY_DR+(y-s.hTH/2)*s.kf_DR);}
+this.clcX0 = function (x){return /*Math.round*/(s.ESX_0+(x-s.wTH/2)*s.kf_0);}
+this.clcY0 = function (y){return /*Math.round*/(s.ESY_0+(y-s.hTH/2)*s.kf_0);}
 
+this.clcX1 = function (x){return /*Math.round*/(s.ESX_1+(x-s.wTH/2)*s.kf_1);}
+this.clcY1 = function (y){return /*Math.round*/(s.ESY_1+(y-s.hTH/2)*s.kf_1);}
 //----------------------------------------------------------------------
-  this.GRopenSvG = function(namE){
-   var kva1g = s.draw_DR.group();
-console.log(s.name+"=OPEN2="+namE)
+  this.GRopenSvG = function(LrNm, namE){
+    var g23 = s.draw_0
+    if (LrNm == 1) { g23 = s.draw_1;}
+	//console.log(s.name+"=OPEN2="+namE)
+    var grp = g23.group();
     
 $.get("index/svgfiles/" + namE+".svg?nocach="+Math.random()*10000, 
       function(svg) {
@@ -188,30 +200,55 @@ $.get("index/svgfiles/" + namE+".svg?nocach="+Math.random()*10000,
 	
 	svg = svg.replace(/<sodipodi([^>]+>)/g,"\n");	
 	
-	///console.log(svg);
-	//s.draw_DR.clear();
-	//s.draw_DR.svg(svg);
-    kva1g.svg(svg)
+    grp.svg(svg)
   	//ictures[0] = svg; //for switching SVG-picture (Picture_Link)
 
 
 	
 	}, 'text').fail(
     function(){
-   kva11 = s.draw_DR.circle(80).fill("#FF5500"); //.opacity(0.8);  
-   kva1g.add(kva11)
+   kva11 = s.draw_0.circle(80).fill("#FF5500"); //.opacity(0.8);  
+   grp.add(kva11)
       });
     
-return kva1g    
-    
+return grp   
 
-}  
+} 
+//----------------------------------------------------------------------
+ //----------------------------------------------------------------------
+  this.LDSvG = function(namE){
+    
+	$.get("index/svgfiles/" + namE+".svg?nocach="+Math.random()*10000, 
+      function(svg) {
+	
+	svg = svg.match(/<svg([^>]+)([\s\S]*)<\/svg>/)[2];
+	svg = svg.substring(1);
+	
+	svg = svg.replace(/<sodipodi([^>]+>)/g,"\n");	
+	
+	return svg	
+	}, 'text').fail(
+    function(){
+	return '<g id="g2892"> <circle r="5" cy="5" cx="5" id="p89" style="fill:#f00;fill-opacity:1" /> </g>';
+      });
+    } 
+  
 //------------------------------------------------------
-  this.newSquare = function(N, x, y, w, h){
-    	this.M[N] = new square(this, x, y, w, h);
-   
+  this.newSquare = function(LrNm, x, y, w, h){
+    
+    var g23 = s.draw_0
+    if (LrNm == 1) { g23 = s.draw_1;}
+    var grp = g23.group();
+    grp.circle(80).fill("#FF5500").opacity(0.8);  
+console.log("nEEEw="+LrNm)
+    //grp - a lonk to an SVG_group somewhere in s.draw_0 or s.draw_1
+	t23 = new square(this, x, y, w, h, grp);
+	this.Mt[LrNm].push(t23);
+    return this.Mt[LrNm][this.Mt[LrNm].length - 1]
     }  
   
+//Mt[0] - layer 0 (on the bottom) it is connected to the div
+//Mt[1] - layer on the top (tools...)
   
   
 //------------------------------------------------------  
@@ -271,11 +308,11 @@ function G_move(x,y){
    if(s.mousePath >= 0){s.mousePath++;}
   // s.dMx = x-s.Mx; 
   // s.dMy = y-s.My;
-     s.dMx = (x-s.Mx)*s.kf_DR; 
-   s.dMy = (y-s.My)*s.kf_DR;
+     s.dMx = (x-s.Mx)*s.kf_0; //........!!!!!!!!!!! USE tOuchLr for kf...
+   s.dMy = (y-s.My)*s.kf_0;
   if (s.tOuched >=0){
     //console.log("s.tOuched="+s.tOuched);
-   s.M[s.tOuched].G_move(s.dMx,s.dMy);
+   s.Mt[s.tOuchLr][s.tOuched].G_move(s.dMx,s.dMy);
   }
 }
  //-------------------------------------------------------------------
@@ -283,7 +320,7 @@ function G_up(x,y){
   //console.log("PUNY3");
 
    s.mousePath = (-1)*s.mousePath;
-	s.M[s.tOuched].G_up(x,y);
+	s.Mt[s.tOuchLr][s.tOuched].G_up(x,y);
 	s.tOuched = -1;
 	s.mousePath = -1;
   
@@ -293,15 +330,17 @@ function G_up(x,y){
 
   
 function NeedMove(){
-for (var i = 0; i < s.M.length; i++){
-  if (s.M[i]!== undefined) {
-          var ob = s.M[i];
+ for (var Lr = 0; Lr < 2; Lr++){  
+	for (var i = 0; i < s.Mt[Lr].length; i++){
+  		if (s.Mt[Lr][i]!== undefined) {
+			var ob = s.Mt[Lr][i];
                 if ((ob.nX!=ob.cX) || (ob.nY!=ob.cY)) {
                         ob.setCurrentPos(ob.nX,ob.nY);
                         //console.log("i="+i);
                 }
-  }
-  }
+ 		 }
+     }
+ }
 setTimeout(NeedMove,50);
 }
 
@@ -315,28 +354,43 @@ this.touchAndTimeEvents();
 
 //-------------------------------------------------------------------  
 kan23 = undefined
+var aLr = 0
 function Whos_Touched(x,y,s){
  
  // kva = s.draw_DR.circle(50).fill("#000000").opacity(0.2).move(s.clcX(x),s.clcY(y)); //.opacity(0.8);
   
   s.mousePath = 0;
-  s.Mx = x; 
+  s.Mx = x;
   s.My = y;
-  var j23 = s.M.length-1;
-  for (; j23 > 0; j23--) {
-		if(!s.M[j23].G_down(s.clcX(x),s.clcY(y))){
-          kan23 = s.draw_DR.rect(s.M[j23].wi,s.M[j23].he).
+  for (var j23 = s.Mt[1].length-1; j23 >= 0; j23--){ //Mt[1] - top layer (tools) 
+     if(!s.Mt[1][j23].G_down(s.clcX1(x),s.clcY1(y))){
+          kan23 = s.draw_1.rect(s.Mt[1][j23].wi,s.Mt[1][j23].he).
           fill("none").stroke({width:1,color:"green"}).
-          move(s.M[j23].Bx,s.M[j23].By)
+          move(s.Mt[1][j23].Bx,s.Mt[1][j23].By);
+       
+       	s.tOuched = j23;
+        s.tOuchLr = 1; //what layer the touched object on? 1-is the top (tools)
+          return;
+		}
+  }//for.. search on layer1 (tool-layer)
+  
+  var j23 = s.Mt[0].length-1;
+  for (; j23 > 0; j23--) {
+		if(!s.Mt[0][j23].G_down(s.clcX0(x),s.clcY0(y))){
+          kan23 = s.draw_0.rect(s.Mt[0][j23].wi,s.Mt[0][j23].he).
+          fill("none").stroke({width:1,color:"green"}).
+          move(s.Mt[0][j23].Bx,s.Mt[0][j23].By)
         	break;
 		}
-  }
-  if (j23 == 0){
-    s.M[0].draG = true;
-    s.M[0].A_down(x,y);
+  }// for j23 >0
+
+  if (j23 == 0){   //nobody is picked? let it be the background of layer0 (bottom)
+    s.Mt[0][0].draG = true;
+    s.Mt[0][0].A_down(x,y);
 	}
   console.log(x+">>"+j23+"<<"+y)     
   s.tOuched = j23;
+  s.tOuchLr = 0;
 }
  //-------------------------------------------------------------------
 

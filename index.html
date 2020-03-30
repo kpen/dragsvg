@@ -13,18 +13,20 @@
 var pAth = "index/entrails/"
 var DX, DY
 </script>
-<!-- //>>-Load_JS -->
-<script src="index/entrails/js/draggit200327c.js"></script>
+
 <script src="index/entrails/js/svg.min.js"></script>
+<script src="index/entrails/js/draggit200329a.js"></script>
+<script src="index/entrails/js/func200329a.js"></script>
 
 </head>
 
 <body>
 <div class="container">
 
-  <div class="bt2" id="drawing">
-			<div class="bt3" id="drawing4"> </div>
-			<div class="bt3" id="drawing3"> </div>
+  <div class="bt2" id="touchsurface">
+    <!-- drawing0 = bottom (svg-objects)  ... drawing 1 = on the top (tools)-->
+			<div class="bt3" id="drawing0"> </div>
+			<div class="bt3" id="drawing1"> </div>
   </div>
 
 </div>
@@ -51,93 +53,40 @@ $( document ).ready(function() {/*->document_ready*/
 	wTH=Math.round((wT/100)*95);
 	hTH=Math.round((hT/100)*95);
 
-	draw2 = SVG('drawing4').size(wTH, hTH);
+	draw1 = SVG('drawing1').size(wTH, hTH);
 //punt = draw2.circle(100).fill("#EE5544").move(250,250);
   
-	draw = SVG('drawing3').size(wTH, hTH);
+	draw0 = SVG('drawing0').size(wTH, hTH);
 
-	dr = new draggit('drawing',wTH,hTH,draw,draw2);
-	dr.DRW_TO();
-	dr.DRW_DR();
+	dr = new draggit('touchsurface',wTH,hTH,draw0,draw1);
+	dr.DRW_1();
+	dr.DRW_0();
   
 // - - - - - - - - - pan as background - - - - - - - - - -
 
-  dr.M[0].Time_move = function(x,y){
-   dr.ESX_DR += (dr.M[0].cX - dr.M[0].nX)//*dr.kf_DR;
-   dr.ESY_DR += (dr.M[0].cY - dr.M[0].nY)//*dr.kf_DR;
-   dr.DRW_DR();    
+  dr.Mt[0][0].Time_move = function(x,y){
+   dr.ESX_0 += (dr.Mt[0][0].cX - dr.Mt[0][0].nX)//*dr.kf_DR;
+   dr.ESY_0 += (dr.Mt[0][0].cY - dr.Mt[0][0].nY)//*dr.kf_DR;
+   dr.DRW_0();    
   }
-  dr.M[0].B_up2 = function(x,y){
-  dr.M[0].setBasePos(0,0);
+  dr.Mt[0][0].B_up2 = function(x,y){
+  dr.Mt[0][0].setBasePos(0,0);
+  }
+  
+  dr.Mt[0][0].B_up0 = function(x,y){
+  var t23 = aDDsVG(1,"menu1",510, 200,100,100) 
+  
+  dr.Mt[1][t23].B_up0 = function(x,y){
+      aDDsVG(0,"for1",x,y,160,30) 
+   }
   }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-var dr1x = dr;
+upLoadSVGs()
+
   
-kva1g = dr1x.GRopenSvG("for1")
-dr1x.newSquare(1, 200, 200,160,30);  
-kva1g.move(200,200);
-dr1x.M[1].Time_move = function(x,y){
-    	kva1g.move(dr1x.M[1].cX,dr1x.M[1].cY)
-	} 
   
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - -   
-kva2g = dr1x.GRopenSvG("00start")
-dr1x.newSquare(2, 440, 340,150,150);  
-kva2g.move(440,340);
-dr1x.M[2].Time_move = function(x,y){
-    	kva2g.move(dr1x.M[2].cX,dr1x.M[2].cY)
-	}
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - -   
-kva3g = dr1x.GRopenSvG("test345")
-dr1x.newSquare(3, 320, 220,50,50);  
-kva3g.move(320,220);
-dr1x.M[3].Time_move = function(x,y){
-		kva3g.move(dr1x.M[3].cX,dr1x.M[3].cY)
-    }   
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-kva4g = dr1x.GRopenSvG("test123")
-dr1x.newSquare(4, 400, 300,150,30);  
-kva4g.move(400,300);
-dr1x.M[4].Time_move = function(x,y){
-    	kva4g.move(dr1x.M[4].cX,dr1x.M[4].cY)
-	}
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - -  
-kva5g = dr1x.GRopenSvG("test234")
-dr1x.newSquare(5, 350, 300,50,50);  
-kva5g.move(350,300);
-dr1x.M[5].Time_move = function(x,y){
-		kva5g.move(dr1x.M[5].cX,dr1x.M[5].cY)
-    }
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - -   
-kva6g = dr1x.GRopenSvG("tool3")
-dr1x.newSquare(6, 550, 300,60,60);  
-kva6g.move(550,300);
-dr1x.M[6].Time_move = function(x,y){
-		kva6g.move(dr1x.M[6].cX,dr1x.M[6].cY)
-    }  
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - -   
-kva7g = dr1x.GRopenSvG("if1")
-dr1x.newSquare(7, 410, 300,110,30);  
-kva7g.move(410,300);
-dr1x.M[7].Time_move = function(x,y){
-		kva7g.move(dr1x.M[7].cX,dr1x.M[7].cY)
-    }  
-  
-// - - - - - - - - - - - - - - - - - - - - - - - - -   
-kva8g = dr1x.GRopenSvG("else1")
-dr1x.newSquare(8, 410, 300,110,30);  
-kva8g.move(410,300);
-dr1x.M[8].Time_move = function(x,y){
-		kva8g.move(dr1x.M[8].cX,dr1x.M[8].cY)
-    }    
-  
-dr.DRW_DR();
+dr.DRW_0();
 
 }) ;//document-ready
 
