@@ -2,7 +2,7 @@
 Another JS-program uses touch(mouse) events to interact with an SVG-container
 
 I'm doing this project for my nephew. He has cerebral palsy. 
-He can interact with his Android-tablet using a touch-pen attached to his head. 
+He can interact with his Android-tablet using a stylus attached to his head. 
 He can programm typing on physical and onscreen keyboards. 
 Now we are trying to figure out how to use drag-drop-functionality
 to make programming more easy and fun. 
