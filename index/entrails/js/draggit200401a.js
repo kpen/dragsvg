@@ -20,7 +20,9 @@ function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
   this.draG=false;
   this.visible = false;//don't know yet what for
   this.active = true; 
+  this.pctName = ''
   this.svGroup = svGroup
+  this.statE = 0;
 
 //this.pont = diVo;
 //pont.move(this.nX, this.nY); //using SVGJS - move "the tool" to the actual XY-position
@@ -53,6 +55,7 @@ function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
   
 
   this.B_down = function(x,y){;}
+  this.B_move = function(dx,dy){;}
   this.B_up0 = function(x,y){;}
   this.B_up2 = function(x,y){;}
   this.N_move = function(x,y){;}
@@ -77,24 +80,18 @@ function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
 //>>-G_move - - - - - - - - - - - - - - - - - - - - 
   this.G_move = function (dx,dy) {
     	if (this.draG){
-    		this.nX = this.Bx+dx;
-    		this.nY = this.By+dy;
-          	this.N_move(this.nX,this.nY);
+            this.A_move(dx,dy)
+            this.B_move(dx,dy)
+
     	}
     }
 //>>-G_up - - - - - - - - - - - - - - - - - - - - -
   this.G_up = function (x,y) {
     if (this.draG){
       
-          $('#indic').css({'background-color':'#FFFFF6'});
     this.draG=false;
       
-               // var ob = s.M[i];
-               // if ((ob.nX!=ob.cX) || (ob.nY!=ob.cY)) {
-                        //ob.setCurrentPos(this.nX,this.nY);
-                        //console.log("i="+i);
-              //  }
-    this.setBasePos(this.nX,this.nY);
+	this.A_up(x,y)
     if (boss.mousePath > -4){this.B_up0(x,y);}
       					else {this.B_up2(x,y);}
     }
@@ -103,6 +100,17 @@ function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
   this.A_down = function(x,y){
   this.Bx=this.cX;
   this.By=this.cY;
+   }
+  //>>- - - - - - - - - - - - - - - - - - - - -
+  this.A_move = function(dx,dy){
+    		this.nX = this.Bx+dx;
+    		this.nY = this.By+dy;
+          	this.N_move(this.nX,this.nY);
+   }
+  //>>- - - - - - - - - - - - - - - - - - - - -
+  this.A_up = function(x,y){
+
+    this.setBasePos(this.nX,this.nY);
    }
 
 //  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
