@@ -29,6 +29,7 @@ function square(boss,x1,y1,wi,he, svGroup){ //svGroup - a link to an SVG_group
 	this.setPict = function(svgstr){
 		this.svGroup.clear()
     	this.svGroup.svg(svgstr)
+        //this.svGroup.add(svg(svgstr))
     }
   
   this.setSize = function(wi,he){
@@ -248,7 +249,7 @@ return grp
     if (LrNm == 1) { g23 = s.draw_1;}
     var grp = g23.group();
     grp.circle(80).fill("#FF5500").opacity(0.8);  
-console.log("nEEEw="+LrNm)
+//console.log("nEEEw="+LrNm)
     //grp - a lonk to an SVG_group somewhere in s.draw_0 or s.draw_1
 	t23 = new square(this, x, y, w, h, grp);
 	this.Mt[LrNm].push(t23);
